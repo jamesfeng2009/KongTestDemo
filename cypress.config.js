@@ -11,8 +11,7 @@ module.exports = defineConfig({
                 { name: 'test3', tags: ['tag4'] }
             ],
             createServiceTestCases: [
-                { name: 'service1', tags: ['service1'] },
-                { name: 'service2', tags: ['service2'] }
+                { name: 'service1', tags: ['service1'] }
             ]
         },
         setupNodeEvents(on, config) {

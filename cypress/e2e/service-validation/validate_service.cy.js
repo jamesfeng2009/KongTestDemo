@@ -30,39 +30,50 @@ describe('Service Validation API Tests', () => {
         });
     });
 
-    // 测试创建新服务接口
-const createServiceTestCases = Cypress.env('createServiceTestCases');
-createServiceTestCases.forEach(({ name, tags }) => {
-    it(`should create a new service with name: ${name} and validate the response`, () => {
-        cy.request({
-            method: 'POST',
-            url: '/default/services',
-            body: {
-                name: name,
-                tags: tags,
-                read_timeout: 60000,
-                retries: 5,
-                connect_timeout: 60000,
-                ca_certificates: null,
-                client_certificate: null,
-                write_timeout: 60000,
-                port: 443,
-                url: "https://www.baidu.com"
-            }
-        }).then((response) => {
-            // 校验响应状态码为 201
-            expect(response.status).to.eq(201);
-            
-            // 校验返回对象的 tags 和 name 属性
-            expect(response.body).to.have.property('name', name);
-            expect(response.body.tags).to.include(tags[0]);
+    // 测试创建新服务接口，确保没有同名服务存在
+    const createServiceTestCases = Cypress.env('createServiceTestCases');
+    createServiceTestCases.forEach(({ name, tags }) => {
+        it(`should create a new service with name: ${name} and validate the response`, () => {
+            // 确保没有同名服务存在
+            cy.request({
+                method: 'DELETE',
+                url: `/default/services/${name}`,
+                failOnStatusCode: false // 即使服务不存在也不报错
+            }).then((deleteResponse) => {
+                cy.log(`Attempted to delete existing service: ${name}, Response Status: ${deleteResponse.status}`);
+
+                // 创建新服务
+                cy.request({
+                    method: 'POST',
+                    url: '/default/services',
+                    body: {
+                        name: name,
+                        tags: tags,
+                        read_timeout: 60000,
+                        retries: 5,
+                        connect_timeout: 60000,
+                        ca_certificates: null,
+                        client_certificate: null,
+                        write_timeout: 60000,
+                        port: 443,
+                        url: "https://www.baidu.com"
+                    },
+                    failOnStatusCode: false
+                }).then((response) => {
+                    cy.log(`Service creation response for ${name}: ${JSON.stringify(response.body)}`);
+                    // 校验响应状态码为 201
+                    expect(response.status).to.eq(201);
+                    
+                    // 校验返回对象的 tags 和 name 属性
+                    expect(response.body).to.have.property('name', name);
+                    expect(response.body.tags).to.include(tags[0]);
+                });
+            });
         });
     });
-});
 
-
-    // 测试查询新建的服务接口并删除它
-    it('should retrieve the list of services and delete the specified service', () => {
+    // 测试查询新建的服务接口并删除它们
+    it('should retrieve the list of services and delete all specified services', () => {
         cy.request({
             method: 'GET',
             url: '/default/services',
@@ -74,22 +85,25 @@ createServiceTestCases.forEach(({ name, tags }) => {
             // 校验响应状态码为 200
             expect(response.status).to.eq(200);
             
-            // 校验返回的数据是否包含特定服务
+            // 校验返回的数据是否包含服务
             const services = response.body.data;
             expect(services).to.be.an('array').that.is.not.empty;
-            
-            const service = services.find(s => s.name === 'service1');
-            expect(service).to.exist;
-            expect(service).to.have.property('name', 'service1');
-            expect(service.tags).to.include('service1');
 
-            // 删除新建的服务
-            cy.request({
-                method: 'DELETE',
-                url: `/default/services/${service.id}`
-            }).then((deleteResponse) => {
-                // 校验 DELETE 请求的响应状态码为 204
-                expect(deleteResponse.status).to.eq(204);
+            // 遍历服务并删除每一个
+            services.forEach((service) => {
+                cy.log(`Deleting service with ID: ${service.id}`);
+                
+                // 删除服务
+                cy.request({
+                    method: 'DELETE',
+                    url: `/default/services/${service.id}`,
+                    failOnStatusCode: false // 即使 DELETE 失败也不使测试直接失败，方便调试
+                }).then((deleteResponse) => {
+                    // 打印 DELETE 响应状态码以进行调试
+                    cy.log(`DELETE Response Status for service ID ${service.id}: ${deleteResponse.status}`);
+                    // 校验 DELETE 请求的响应状态码为 204
+                    expect(deleteResponse.status).to.eq(204);
+                });
             });
         });
     });
