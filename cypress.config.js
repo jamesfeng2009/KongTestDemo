@@ -7,8 +7,8 @@ module.exports = defineConfig({
     env: {
       validateServiceTestCases: [
         { name: 'test1', tags: ['tag1'] },
-        { name: 'test2', tags: ['tag2', 'tag3'] },
-        { name: 'test3', tags: ['tag4'] }
+        { name: 'test2', tags: ['tag2'] },
+        { name: 'test3', tags: ['tag3'] }
       ],
       createServiceTestCases: [
         { name: 'service1', tags: ['service1'] },
@@ -42,6 +42,14 @@ module.exports = defineConfig({
       });
 
       return config; // Return the updated configuration object
+    },
+    reporter: 'mochawesome', // Set the test reporting tool to mochawesome
+    reporterOptions: {
+      reportDir: 'cypress/results', // set the directory where the reports will be saved
+      overwrite: false, // Do not overwrite existing reports
+      html: true, // Generate HTML report
+      json: true, // Generate JSON report
+      timestamp: 'mmddyyyy_HHMMss' // Add timestamp to report filenames
     }
   }
 });
