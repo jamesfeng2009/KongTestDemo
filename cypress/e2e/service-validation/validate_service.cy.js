@@ -72,8 +72,32 @@ describe('Service Validation API Tests', () => {
         });
     });
 
-    // 测试查询新建的服务接口并删除它们
-    it('should retrieve the list of services and delete all specified services', () => {
+    // 测试查询服务接口
+    it('should retrieve the list of services and log the service details', () => {
+        cy.request({
+            method: 'GET',
+            url: '/default/services',
+            qs: {
+                sort_desc: 1,
+                size: 30
+            }
+        }).then((response) => {
+            // 校验响应状态码为 200
+            expect(response.status).to.eq(200);
+            
+            // 校验返回的数据是否包含服务
+            const services = response.body.data;
+            expect(services).to.be.an('array').that.is.not.empty;
+            
+            // 打印服务对象
+            services.forEach((service) => {
+                cy.log(`Service found with ID: ${service.id}, Name: ${service.name}`);
+            });
+        });
+    });
+
+    // 测试删除所有服务接口
+    it('should delete all specified services', () => {
         cy.request({
             method: 'GET',
             url: '/default/services',
