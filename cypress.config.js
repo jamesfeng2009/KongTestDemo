@@ -11,8 +11,13 @@ module.exports = defineConfig({
                 { name: 'test3', tags: ['tag4'] }
             ],
             createServiceTestCases: [
-                { name: 'service1', tags: ['service1'] }
-            ]
+                { name: 'service1', tags: ['service1'] },
+                { name: 'service2', tags: ['service2'] }
+            ],
+            createRouteTestCases: [
+                { name: "route1", tags: ["route"], paths: ["/path1"] },
+                { name: "route2", tags: ["route2"], paths: ["/path2"] }
+              ]
         },
         setupNodeEvents(on, config) {
             // 使用有效的事件名称注册事件处理
