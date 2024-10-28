@@ -258,4 +258,22 @@ describe('Service Validation API Tests', () => {
             });
         });
     });
+
+    // 新增的GET请求，断言data属性为空
+    it('should verify that the services list is empty when sorted by path', () => {
+        cy.request({
+            method: 'GET',
+            url: '/default/services',
+            qs: {
+                sort_by: 'path',
+                size: 30
+            }
+        }).then((response) => {
+            // 校验响应状态码为 200
+            expect(response.status).to.eq(200);
+            
+            // 校验返回的 data 属性为空
+            expect(response.body.data).to.be.an('array').that.is.empty;
+        });
+    });
 });
