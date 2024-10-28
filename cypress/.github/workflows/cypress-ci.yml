@@ -1,0 +1,47 @@
+name: Cypress CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  cypress-run:
+    runs-on: macos-latest  # 修改为 macOS 运行环境
+
+    steps:
+      # 检查代码库
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 设置 Node.js 版本
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      # 安装项目依赖
+      - name: Install dependencies
+        run: npm install
+
+      # 运行 Cypress 测试
+      - name: Run Cypress tests
+        run: npm run test
+
+      # 合并测试报告（mochawesome-merge）
+      - name: Merge mochawesome reports
+        run: npm run report:merge
+
+      # 生成最终的 HTML 测试报告
+      - name: Generate mochawesome HTML report
+        run: npm run report:generate
+
+      # 上传生成的测试报告到 GitHub Actions
+      - name: Upload mochawesome report
+        uses: actions/upload-artifact@v3
+        with:
+          name: mochawesome-report
+          path: cypress/results/report.html
