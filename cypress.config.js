@@ -1,10 +1,8 @@
 const { defineConfig } = require("cypress");
-const merge = require('mochawesome-merge');
-const generator = require('mochawesome-report-generator');
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:8001', // Adjust this to your actual API base URL
+    baseUrl: 'http://localhost:8001',
     supportFile: false,
     env: {
       validateServiceTestCases: [
@@ -23,29 +21,10 @@ module.exports = defineConfig({
     },
     setupNodeEvents(on, config) {
       // Capture events after running tests
-      on('after:run', async (results) => {
+      on('after:run', (results) => {
         console.log('All tests have completed running.');
         if (results.totalFailed > 0) {
           console.log(`Total failed tests: ${results.totalFailed}`);
-        }
-
-        try {
-          // Merge all Mochawesome JSON reports into a single report
-          const report = await merge({
-            files: ['cypress/results/*.json'] // Make sure the path is correct
-          });
-
-          // Generate the final HTML report from the merged JSON
-          await generator.create(report, {
-            reportDir: 'cypress/results', // Directory to save the report
-            saveHtml: true, // Save the report as an HTML file
-            saveJson: true, // Save the report as a JSON file
-            overwrite: true // Overwrite previous reports
-          });
-
-          console.log('Test report successfully generated!');
-        } catch (err) {
-          console.error('Error generating the report: ', err);
         }
       });
 
@@ -63,14 +42,6 @@ module.exports = defineConfig({
       });
 
       return config; // Return the updated configuration object
-    },
-    reporter: 'mochawesome',
-    reporterOptions: {
-      reportDir: 'cypress/results', // Directory where reports will be saved
-      overwrite: false, // Do not overwrite existing reports
-      html: true, // Generate HTML reports
-      json: true, // Generate JSON reports
-      timestamp: 'mmddyyyy_HHMMss' // Add timestamps to report filenames
     }
   }
 });
