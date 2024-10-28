@@ -30,7 +30,7 @@ jobs:
       # 启动 Docker Compose 来运行 Kong 服务
       - name: Start Kong with Docker Compose
         run: docker-compose up -d
-        working-directory: ./KongDemoTest/docker-compose/docker-compose.yml
+        working-directory: ./KongDemoTest/docker-compose
 
       # 等待 Kong 服务完全启动
       - name: Wait for Kong to be ready
@@ -66,4 +66,4 @@ jobs:
       # 关闭 Kong 服务
       - name: Stop Kong services
         run: docker-compose down
-        working-directory: ./KongDemoTest/docker-compose/docker-compose.yml
+        working-directory: ./KongDemoTest/docker-compose
