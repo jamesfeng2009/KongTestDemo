@@ -20,9 +20,9 @@ module.exports = defineConfig({
               ]
         },
         setupNodeEvents(on, config) {
-            // 使用有效的事件名称注册事件处理
+            // Register event handlers with valid event names
 
-            // 1. 捕获每次测试运行后事件
+            // 1. Capture the event after each test run
             on('after:run', (results) => {
                 console.log('All tests have completed running.');
                 if (results.totalFailed > 0) {
@@ -30,12 +30,12 @@ module.exports = defineConfig({
                 }
             });
 
-            // 2. 捕获每次测试截图事件
+            // 2. Capture the event when each screenshot is taken
             on('after:screenshot', (details) => {
                 console.log('Screenshot taken:', details.path);
             });
 
-            // 3. 捕获浏览器启动事件，添加额外的浏览器选项
+            // 3. Capture the event when the browser is launched, add extra browser options
             on('before:browser:launch', (browser = {}, launchOptions) => {
                 if (browser.name === 'chrome' && browser.isHeadless) {
                     launchOptions.args.push('--disable-gpu');
@@ -43,7 +43,7 @@ module.exports = defineConfig({
                 return launchOptions;
             });
 
-            return config; // 必须返回修改后的配置对象
+            return config; // Must return the modified configuration object
         },
     },
 });
