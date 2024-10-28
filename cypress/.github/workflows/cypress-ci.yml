@@ -10,7 +10,7 @@ on:
 
 jobs:
   cypress-run:
-    runs-on: macos-latest  # 修改为 macOS 运行环境
+    runs-on: macos-latest  # 使用 macOS 运行环境
 
     steps:
       # 检查代码库
@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '20.16.0'  # 修改为与你本地的 Node.js 版本一致
 
       # 安装项目依赖
       - name: Install dependencies

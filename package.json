@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "cypress run", 
-    "test:open": "cypress open", 
-    "report:merge": "mochawesome-merge cypress/results/*.json > cypress/results/mochawesome.json", 
-    "report:generate": "marge cypress/results/mochawesome.json --reportDir cypress/results --inline", 
-    "report": "npm run report:merge && npm run report:generate" 
+    "test": "cypress run",
+    "test:open": "cypress open",
+    "report:clean": "if [ -f cypress/results/mochawesome.html ]; then rm cypress/results/mochawesome.html; fi && if [ -f cypress/results/mochawesome.json ]; then rm cypress/results/mochawesome.json; fi && if [ -f cypress/results/report.html ]; then rm cypress/results/report.html; fi && if [ -f cypress/results/report.json ]; then rm cypress/results/report.json; fi",
+    "report:merge": "npm run report:clean && mochawesome-merge cypress/results/*.json > cypress/results/report.json",
+    "report:generate": "marge cypress/results/report.json -f report -o cypress/results",
+    "report": "npm run report:merge && npm run report:generate"
   },
   "keywords": [],
   "author": "",
