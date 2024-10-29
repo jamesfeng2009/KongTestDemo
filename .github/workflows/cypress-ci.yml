@@ -41,12 +41,10 @@ jobs:
       - name: List root directory contents
         run: ls -al
 
-      - name: List KongTestDemo directory contents
-        run: ls -al KongTestDemo
-
       # 启动 Docker Compose 来运行 Kong 服务
+      # 修改为正确的 docker-compose 文件路径
       - name: Start Kong with Docker Compose
-        run: docker-compose -f ./KongTestDemo/docker-compose/docker-compose.yml up -d
+        run: docker-compose -f ./docker-compose/docker-compose.yml up -d
 
       # 等待 Kong 服务完全启动
       - name: Wait for Kong to be ready
@@ -81,4 +79,4 @@ jobs:
 
       # 关闭 Kong 服务
       - name: Stop Kong services
-        run: docker-compose -f ./KongTestDemo/docker-compose/docker-compose.yml down
+        run: docker-compose -f ./docker-compose/docker-compose.yml down
